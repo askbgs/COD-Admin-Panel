@@ -157,7 +157,7 @@ export default function OrderFormModal({
                       <input
                         id="form-customer-name"
                         type="text"
-                        placeholder="e.g. Youssef El Alami"
+                        placeholder="e.g. Pathum Fernando"
                         value={customerName}
                         onChange={(e) => setCustomerName(e.target.value)}
                         required
@@ -178,7 +178,7 @@ export default function OrderFormModal({
                       <input
                         id="form-customer-phone"
                         type="tel"
-                        placeholder="e.g. +212 661-234567"
+                        placeholder="e.g. +94 77 123 4567"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         required
@@ -200,7 +200,7 @@ export default function OrderFormModal({
                     <input
                       id="form-customer-email"
                       type="email"
-                      placeholder="youssef.alami@gmail.com"
+                      placeholder="pathum.fernando@gmail.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-gray-300 bg-white text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
@@ -211,9 +211,14 @@ export default function OrderFormModal({
 
               {/* Delivery Coordinates Group */}
               <div className="space-y-3" id="delivery-coordinates-group">
-                <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-                  2. Destination & Logistics Address
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                    2. Destination & Logistics Address
+                  </h3>
+                  <span className="text-[10px] font-bold text-blue-700 bg-blue-50/50 px-2 py-0.5 rounded border border-blue-200">
+                    Sri Lanka Deliveries Only
+                  </span>
+                </div>
 
                 {/* City Selector */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
@@ -261,7 +266,7 @@ export default function OrderFormModal({
                     <input
                       id="form-custom-city"
                       type="text"
-                      placeholder="e.g. Oujda"
+                      placeholder="e.g. Jaffna"
                       value={customCity}
                       onChange={(e) => setCustomCity(e.target.value)}
                       required={useCustomCity}
@@ -278,7 +283,7 @@ export default function OrderFormModal({
                   <textarea
                     id="form-address"
                     rows={2}
-                    placeholder="e.g. 24 Rue de la Liberté, Gauthier, Apartment 3"
+                    placeholder="e.g. 45 Galle Road, Colombo 03, Apartment 3"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     required
@@ -356,11 +361,11 @@ export default function OrderFormModal({
                   <div className="bg-blue-50/50 rounded-lg p-3.5 border border-blue-100 flex flex-col justify-center h-full">
                     <div className="flex justify-between items-center text-xs text-blue-600 font-semibold">
                       <span>Calculated Value:</span>
-                      <span>{quantity} × ${calculatedPrice}</span>
+                      <span>{quantity} × LKR {calculatedPrice.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between items-center text-sm font-bold text-blue-700 mt-1">
                       <span>COD Total Value:</span>
-                      <span>${calculatedTotal}</span>
+                      <span>LKR {calculatedTotal.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>

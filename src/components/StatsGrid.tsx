@@ -63,7 +63,7 @@ export default function StatsGrid({ orders, activeStatusFilter, onSelectStatusFi
     {
       id: 'revenue',
       title: 'Projected COD Value',
-      value: `$${totalRevenue.toLocaleString()}`,
+      value: `LKR ${totalRevenue.toLocaleString()}`,
       desc: `Active value breakdown`,
       icon: TrendingUp,
       color: 'text-blue-600',

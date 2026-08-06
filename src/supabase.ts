@@ -25,29 +25,34 @@ export interface Order {
   cancellation_reason?: string;
 }
 
-// Default prices for common variants to make stats look highly realistic and dynamic
+// Default prices for common variants to make stats look highly realistic and dynamic in Sri Lankan Rupees (LKR)
 export const PRODUCT_PRICES: Record<string, number> = {
-  'Wireless Ergonomic Mouse': 59,
-  'Ultra-Slim Mechanical Keyboard': 129,
-  'Minimalist Desk Pad': 35,
-  'Noise Cancelling Headphones': 199,
-  'Leather Travel Wallet': 45,
-  'Portable Power Bank 20k': 49,
+  'Wireless Ergonomic Mouse': 18000,
+  'Ultra-Slim Mechanical Keyboard': 39000,
+  'Minimalist Desk Pad': 10500,
+  'Noise Cancelling Headphones': 60000,
+  'Leather Travel Wallet': 13500,
+  'Portable Power Bank 20k': 15000,
 };
 
-// Default cities in our system for filter and creation
+// Default cities in Sri Lanka for delivery dispatch filter and creation
 export const POPULAR_CITIES = [
-  'Casablanca',
-  'Marrakech',
-  'Rabat',
-  'Tangier',
-  'Fes',
-  'Agadir',
-  'Cairo',
-  'Alexandria',
-  'Riyadh',
-  'Jeddah',
-  'Dubai',
+  'Colombo',
+  'Gampaha',
+  'Kandy',
+  'Galle',
+  'Negombo',
+  'Jaffna',
+  'Kalutara',
+  'Kurunegala',
+  'Anuradhapura',
+  'Trincomalee',
+  'Batticaloa',
+  'Matara',
+  'Ratnapura',
+  'Badulla',
+  'Nuwara Eliya',
+  'Hambantota',
 ];
 
 export const PRODUCT_VARIANTS = Object.keys(PRODUCT_PRICES);

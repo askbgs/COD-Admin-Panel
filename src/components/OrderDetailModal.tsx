@@ -273,12 +273,12 @@ export default function OrderDetailModal({
 
                 <div className="border-t border-gray-100 pt-3 flex justify-between items-center text-xs">
                   <span className="text-gray-500 font-semibold">Unit Price:</span>
-                  <span className="text-gray-800 font-bold">${itemPrice}</span>
+                  <span className="text-gray-800 font-bold">LKR {itemPrice.toLocaleString()}</span>
                 </div>
 
                 <div className="border-t border-dashed border-gray-300 pt-3 flex justify-between items-center">
                   <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">COD Collection Amount:</span>
-                  <span className="text-base font-extrabold text-blue-700">${orderTotal}</span>
+                  <span className="text-base font-extrabold text-blue-700">LKR {orderTotal.toLocaleString()}</span>
                 </div>
               </div>
             </div>

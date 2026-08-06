@@ -346,10 +346,10 @@ export default function OrderTable({
                         <p className="text-xs text-gray-500 mt-1 pl-4.5 font-medium">
                           Qty: <span className="font-bold text-gray-800">{order.quantity || 1}</span> 
                           <span className="mx-1">×</span> 
-                          ${itemPrice}
+                          LKR {itemPrice.toLocaleString()}
                         </p>
                         <p className="text-xs font-bold text-gray-900 mt-0.5 pl-4.5">
-                          Total: ${orderTotal}
+                          Total: LKR {orderTotal.toLocaleString()}
                         </p>
                       </div>
                     </td>
