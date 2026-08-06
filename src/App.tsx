@@ -10,7 +10,8 @@ import OrderDetailModal from './components/OrderDetailModal';
 import OrderFormModal from './components/OrderFormModal';
 import SettingsView from './components/SettingsView';
 import StatusPromptModal from './components/StatusPromptModal';
-import { AlertCircle, CheckCircle2, ShieldCheck, Database, ShoppingBag, PlusCircle, LogOut } from 'lucide-react';
+import AIFraudModal from './components/AIFraudModal';
+import { AlertCircle, CheckCircle2, ShieldCheck, Database, ShoppingBag, PlusCircle, LogOut, Sparkles } from 'lucide-react';
 
 export default function App() {
   // Brand Configuration State
@@ -40,6 +41,7 @@ export default function App() {
   const [pendingStatusUpdate, setPendingStatusUpdate] = useState<{ order: Order; newStatus: Order['status'] } | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isFraudOpen, setIsFraudOpen] = useState(false);
 
   // Submitting States
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -315,6 +317,17 @@ export default function App() {
     }
   };
 
+  // Direct cancel action for AI Fraud Guard
+  const handleCancelSuspiciousOrderDirectly = async (order: Order, reason: string): Promise<boolean> => {
+    try {
+      await handleStatusUpdate(order, 'Cancelled', { cancellation_reason: reason });
+      return true;
+    } catch (err) {
+      console.error('Failed to cancel suspicious order:', err);
+      return false;
+    }
+  };
+
   // Logging COD Orders
   const handleCreateOrder = async (newOrder: Omit<Order, 'id' | 'created_at'>): Promise<boolean> => {
     setIsSubmitting(true);
@@ -509,14 +522,24 @@ export default function App() {
             </div>
 
             {activeTab === 'orders' && (
-              <button
-                id="book-order-trigger-btn"
-                onClick={() => setIsCreateOpen(true)}
-                className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 transition-all"
-              >
-                <PlusCircle className="w-4 h-4" />
-                <span>Book COD Order</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  id="ai-fraud-trigger-btn"
+                  onClick={() => setIsFraudOpen(true)}
+                  className="px-3.5 py-2 border border-indigo-200 bg-indigo-50/50 hover:bg-indigo-50 text-indigo-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all"
+                >
+                  <Sparkles className="w-3.5 h-3.5 animate-pulse text-indigo-500" />
+                  <span>AI Fraud Guard</span>
+                </button>
+                <button
+                  id="book-order-trigger-btn"
+                  onClick={() => setIsCreateOpen(true)}
+                  className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 transition-all"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Book COD Order</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -617,6 +640,14 @@ export default function App() {
         newStatus={pendingStatusUpdate?.newStatus || null}
         onClose={() => setPendingStatusUpdate(null)}
         onConfirm={(order, status, fields) => handleStatusUpdate(order, status, fields)}
+      />
+
+      {/* 4. AI Fraud Guard Scanning Overlay */}
+      <AIFraudModal
+        isOpen={isFraudOpen}
+        onClose={() => setIsFraudOpen(false)}
+        orders={orders}
+        onCancelOrder={handleCancelSuspiciousOrderDirectly}
       />
 
       {/* Universal Floating Toast Notifications */}
