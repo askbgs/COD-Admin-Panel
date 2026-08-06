@@ -1,0 +1,6 @@
+{
+  "name": "COD Order Dashboard",
+  "description": "A clean, modern SaaS dashboard for managing Cash-on-Delivery (COD) orders with Supabase, featuring analytics, filters, status controls, and settings.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
