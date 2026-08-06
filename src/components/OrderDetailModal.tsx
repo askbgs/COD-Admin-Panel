@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, User, Phone, Mail, MapPin, Package, Calendar, Clock, ArrowRight, Clipboard, ExternalLink, HelpCircle } from 'lucide-react';
+import { X, User, Phone, Mail, MapPin, Package, Calendar, Clock, ArrowRight, Clipboard, ExternalLink, HelpCircle, Printer } from 'lucide-react';
 import { Order, getProductPrice, getNormalizedStatus } from '../supabase';
 
 interface OrderDetailModalProps {
@@ -29,6 +29,301 @@ export default function OrderDetailModal({
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handlePrintReceipt = () => {
+    // Create a hidden iframe
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'absolute';
+    iframe.style.width = '0px';
+    iframe.style.height = '0px';
+    iframe.style.border = 'none';
+    iframe.style.left = '-9999px';
+    iframe.style.top = '-9999px';
+    
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow?.document || iframe.contentDocument;
+    if (!doc) return;
+
+    const formattedDate = new Date().toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Receipt - #${order.id}</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+            body {
+              font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+              color: #1a1a1a;
+              background: #ffffff;
+              padding: 30px;
+              max-width: 500px;
+              margin: 0 auto;
+              line-height: 1.5;
+            }
+            .header {
+              text-align: center;
+              border-bottom: 2px dashed #cbd5e1;
+              padding-bottom: 20px;
+              margin-bottom: 25px;
+            }
+            .brand {
+              font-size: 18px;
+              font-weight: 800;
+              letter-spacing: 0.5px;
+              text-transform: uppercase;
+              color: #1e3a8a;
+            }
+            .subtitle {
+              font-size: 10px;
+              color: #64748b;
+              font-weight: 600;
+              margin-top: 4px;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+            .receipt-title {
+              font-size: 14px;
+              font-weight: 700;
+              margin-top: 15px;
+              color: #0f172a;
+              letter-spacing: 0.5px;
+            }
+            .meta-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 12px;
+              margin-bottom: 25px;
+              font-size: 11px;
+            }
+            .meta-item {
+              background: #f8fafc;
+              padding: 8px 12px;
+              border-radius: 6px;
+              border: 1px solid #f1f5f9;
+            }
+            .meta-label {
+              font-weight: 700;
+              color: #64748b;
+              font-size: 8px;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              margin-bottom: 3px;
+            }
+            .meta-value {
+              font-weight: 600;
+              color: #0f172a;
+            }
+            .section-title {
+              font-size: 9px;
+              font-weight: 800;
+              color: #94a3b8;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              margin-bottom: 8px;
+              border-bottom: 1px solid #e2e8f0;
+              padding-bottom: 4px;
+            }
+            .address-box {
+              font-size: 11.5px;
+              background: #f8fafc;
+              border: 1px solid #f1f5f9;
+              padding: 10px 12px;
+              border-radius: 6px;
+              margin-bottom: 20px;
+            }
+            .address-line {
+              font-weight: 600;
+              color: #334155;
+            }
+            .items-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 20px;
+              font-size: 11.5px;
+            }
+            .items-table th {
+              text-align: left;
+              font-weight: 700;
+              color: #64748b;
+              text-transform: uppercase;
+              font-size: 8px;
+              letter-spacing: 0.5px;
+              padding: 8px 0;
+              border-bottom: 2px solid #e2e8f0;
+            }
+            .items-table td {
+              padding: 10px 0;
+              border-bottom: 1px solid #f1f5f9;
+            }
+            .item-name {
+              font-weight: 700;
+              color: #0f172a;
+            }
+            .item-qty-price {
+              color: #64748b;
+              font-size: 10px;
+              margin-top: 2px;
+            }
+            .item-total {
+              text-align: right;
+              font-weight: 700;
+              color: #0f172a;
+            }
+            .summary-section {
+              border-top: 2px dashed #e2e8f0;
+              padding-top: 12px;
+              margin-top: 15px;
+              display: flex;
+              flex-direction: column;
+              align-items: flex-end;
+            }
+            .total-row {
+              display: flex;
+              justify-content: space-between;
+              width: 100%;
+              max-width: 220px;
+              font-size: 12px;
+              margin-bottom: 5px;
+            }
+            .total-row.grand-total {
+              font-size: 14px;
+              font-weight: 800;
+              color: #1e3a8a;
+              border-top: 1px solid #e2e8f0;
+              padding-top: 8px;
+              margin-top: 4px;
+            }
+            .total-label {
+              color: #64748b;
+            }
+            .total-value {
+              font-weight: 700;
+            }
+            .footer {
+              margin-top: 35px;
+              text-align: center;
+              font-size: 9.5px;
+              color: #94a3b8;
+              border-top: 1px dashed #e2e8f0;
+              padding-top: 15px;
+            }
+            .footer-stamp {
+              display: inline-block;
+              border: 1.5px solid #ef4444;
+              color: #ef4444;
+              font-size: 9px;
+              font-weight: 800;
+              padding: 3px 8px;
+              border-radius: 4px;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              margin-bottom: 10px;
+              transform: rotate(-3deg);
+            }
+            @media print {
+              body {
+                padding: 10px;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="brand">COD Deliveries Sri Lanka</div>
+            <div class="subtitle">Official Order Delivery Slip</div>
+            <div class="receipt-title">CASH ON DELIVERY (COD) RECEIPT</div>
+          </div>
+
+          <div class="meta-grid">
+            <div class="meta-item">
+              <div class="meta-label">Order Ref ID</div>
+              <div class="meta-value">#${order.id}</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Date Generated</div>
+              <div class="meta-value">${formattedDate}</div>
+            </div>
+          </div>
+
+          <div class="section-title">Customer Contact Info</div>
+          <div class="address-box">
+            <div style="font-weight: 700; color: #0f172a; margin-bottom: 3px;">${order.customer_name}</div>
+            <div style="margin-bottom: 3px; color: #475569;">Phone: <strong>${order.phone}</strong></div>
+            ${order.email ? `<div style="color: #475569; margin-bottom: 3px;">Email: ${order.email}</div>` : ''}
+          </div>
+
+          <div class="section-title">Delivery Destination</div>
+          <div class="address-box">
+            <div class="address-line">${order.address}</div>
+            <div style="font-weight: 700; color: #1e3a8a; margin-top: 4px; font-size: 12px;">${order.city}, Sri Lanka</div>
+          </div>
+
+          <div class="section-title">Items & Pricing</div>
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Item Description</th>
+                <th style="text-align: right;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="item-name">${order.product_variant}</div>
+                  <div class="item-qty-price">${order.quantity || 1} x LKR ${itemPrice.toLocaleString()}</div>
+                </td>
+                <td class="item-total">LKR ${orderTotal.toLocaleString()}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="summary-section">
+            <div class="total-row">
+              <span class="total-label">Subtotal</span>
+              <span class="total-value">LKR ${orderTotal.toLocaleString()}</span>
+            </div>
+            <div class="total-row">
+              <span class="total-label">Delivery Fee</span>
+              <span class="total-value" style="color: #10b981; font-weight: 700;">FREE (COD)</span>
+            </div>
+            <div class="total-row grand-total">
+              <span class="total-label">Balance to Collect</span>
+              <span class="total-value">LKR ${orderTotal.toLocaleString()}</span>
+            </div>
+          </div>
+
+          <div class="footer">
+            <div class="footer-stamp">Cash On Delivery</div>
+            <div>Thank you for your business! Please pay the courier agent in cash upon delivery.</div>
+            <div style="margin-top: 6px; font-size: 8px;">Generated via COD Admin Dashboard. No signature required.</div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    doc.open();
+    doc.write(htmlContent);
+    doc.close();
+
+    // Give a small tick for browser rendering
+    setTimeout(() => {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+      // Safely cleanup the iframe after printing
+      setTimeout(() => {
+        document.body.removeChild(iframe);
+      }, 1000);
+    }, 500);
   };
 
   const statusWorkflow: Order['status'][] = ['Pending', 'Confirmed', 'Shipped', 'Delivered'];
@@ -88,13 +383,24 @@ export default function OrderDetailModal({
                 Ref ID: #{order.id || 'N/A'}
               </h2>
             </div>
-            <button
-              id="close-detail-modal"
-              onClick={onClose}
-              className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                id="print-receipt-btn"
+                onClick={handlePrintReceipt}
+                className="px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600 hover:text-gray-900 transition-all cursor-pointer flex items-center gap-1.5 text-xs font-bold shadow-xs hover:border-gray-300"
+                title="Print Receipt"
+              >
+                <Printer className="w-3.5 h-3.5 text-blue-600" />
+                <span>Print Receipt</span>
+              </button>
+              <button
+                id="close-detail-modal"
+                onClick={onClose}
+                className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Modal Content - Scrollable */}
